@@ -1,4 +1,3 @@
-import "./App.css";
 import ResponsiveAppBar from "./components/Navbar";
 import Business from "./pages/Business";
 import Invoice from "./pages/Invoice";
