@@ -1,7 +1,6 @@
-// import { Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
 
-function Contacts() {
+function NewContact() {
   const { register, handleSubmit } = useForm();
 
   const onSubmit = (data) => {
@@ -20,41 +19,39 @@ function Contacts() {
           marginTop: "10px",
         }}
       >
-        <label>
-          Company Name
-          <input type="text" {...register("companyName")} />
-        </label>
-        <label>
-          Unique Entity Number (UEN)
-          <input type="number" {...register("UEN")} />
-        </label>
-        <label>
-          Attention
-          <input type="text" {...register("attention")} />
-        </label>
-        <label>
-          Email
-          <input type="text" {...register("email")} />
-        </label>
-        <label>
-          Phone
-          <input type="number" {...register("phone")} />
-        </label>
-        <input type="text" placeholder="Email..." {...register("email")} />
-        <input type="number" placeholder="Age..." {...register("age")} />
-        <input
-          type="password"
-          placeholder="Password..."
-          {...register("password")}
-        />
-        <input
-          type="password"
-          placeholder="Confirm Password..."
-          {...register("confirmPassword")}
-        />
+        <div style={{ marginBottom: "10px" }}>
+          <label>
+            Company Name
+            <input type="text" {...register("companyName")} />
+          </label>{" "}
+        </div>
+        <div style={{ marginBottom: "10px" }}>
+          <label>
+            Unique Entity Number (UEN)
+            <input type="text" {...register("UEN")} />
+          </label>
+        </div>
+        <div style={{ marginBottom: "10px" }}>
+          <label>
+            Attention
+            <input type="text" {...register("attention")} />
+          </label>
+        </div>
+        <div style={{ marginBottom: "10px" }}>
+          <label>
+            Email
+            <input type="text" {...register("email")} />
+          </label>
+        </div>
+        <div style={{ marginBottom: "10px" }}>
+          <label>
+            Phone
+            <input type="number" {...register("phone")} />
+          </label>
+        </div>
         <input type="submit" />
       </div>
     </form>
   );
 }
-export default Contacts;
+export default NewContact;

@@ -1,7 +1,7 @@
 import ResponsiveAppBar from "./components/Navbar";
 import Business from "./pages/Business";
 import Invoice from "./pages/Invoice";
-import NewContact from "./pages/newContact";
+import NewContact from "./pages/NewContact";
 import Contacts from "./pages/Contacts";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
