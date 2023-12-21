@@ -1,10 +1,22 @@
 import { useForm } from "react-hook-form";
+import { BACKEND_URL } from "../constants/BackendUrl";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function NewContact() {
   const { register, handleSubmit } = useForm();
+  const navigate = useNavigate();
 
   const onSubmit = (data) => {
-    console.log(data);
+    axios
+      .post(`${BACKEND_URL}/contacts/add`, {
+        companyName: data.companyName,
+        uen: data.uen,
+        customerName: data.customerName,
+        email: data.email,
+        phone: data.phone,
+      })
+      .then(navigate(`/Contacts`));
   };
 
   return (
@@ -21,6 +33,11 @@ function NewContact() {
       >
         <div style={{ marginBottom: "10px" }}>
           <label>
+            <strong>Please insert the new contact details.</strong>
+          </label>
+        </div>
+        <div style={{ marginBottom: "10px" }}>
+          <label>
             Company Name
             <input type="text" {...register("companyName")} />
           </label>{" "}
@@ -28,13 +45,13 @@ function NewContact() {
         <div style={{ marginBottom: "10px" }}>
           <label>
             Unique Entity Number (UEN)
-            <input type="text" {...register("UEN")} />
+            <input type="text" {...register("uen")} />
           </label>
         </div>
         <div style={{ marginBottom: "10px" }}>
           <label>
-            Attention
-            <input type="text" {...register("attention")} />
+            Customer Name
+            <input type="text" {...register("customerName")} />
           </label>
         </div>
         <div style={{ marginBottom: "10px" }}>
