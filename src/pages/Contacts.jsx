@@ -1,4 +1,4 @@
-// add "New contact" button
+//todo: use useEffect hook to send API request to server & useState hook to sets the state variable to the data received from the backend server
 import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
 
