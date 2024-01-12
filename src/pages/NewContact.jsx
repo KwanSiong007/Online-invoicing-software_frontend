@@ -4,7 +4,11 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 function NewContact() {
-  const { register, handleSubmit } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
   const navigate = useNavigate();
 
   const onSubmit = (data) => {
@@ -39,32 +43,68 @@ function NewContact() {
         <div style={{ marginBottom: "10px" }}>
           <label>
             Company Name
-            <input type="text" {...register("companyName")} />
-          </label>{" "}
+            <input
+              type="text"
+              {...register("companyName", {
+                required: "Company Name is required",
+              })}
+            />
+          </label>
+          {errors.companyName && <p>{errors.companyName.message}</p>}
         </div>
         <div style={{ marginBottom: "10px" }}>
           <label>
             Unique Entity Number (UEN)
-            <input type="text" {...register("uen")} />
+            <input
+              type="text"
+              {...register("uen", { required: "UEN is required" })}
+            />
           </label>
+          {errors.uen && <p>{errors.uen.message}</p>}
         </div>
         <div style={{ marginBottom: "10px" }}>
           <label>
             Customer Name
-            <input type="text" {...register("customerName")} />
+            <input
+              type="text"
+              {...register("customerName", {
+                required: "Customer Name is required",
+              })}
+            />
           </label>
+          {errors.customerName && <p>{errors.customerName.message}</p>}
         </div>
         <div style={{ marginBottom: "10px" }}>
+          {/* pattern: {...}: This rule is used to specify a regular expression (regex) that the input value must match to be considered valid. 
+          The regex used here is a common pattern for validating email addresses. 
+          If the input doesn't match this pattern, React Hook Form will return an error object containing the message "Invalid email address". */}
           <label>
             Email
-            <input type="text" {...register("email")} />
+            <input
+              type="text"
+              {...register("email", {
+                required: "Email is required",
+                pattern: {
+                  value:
+                    /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+                  message: "Invalid email address",
+                },
+              })}
+            />
           </label>
+          {errors.email && <p>{errors.email.message}</p>}
         </div>
         <div style={{ marginBottom: "10px" }}>
           <label>
             Phone
-            <input type="number" {...register("phone")} />
+            <input
+              type="number"
+              {...register("phone", {
+                required: "Phone number is required",
+              })}
+            />
           </label>
+          {errors.phone && <p>{errors.phone.message}</p>}
         </div>
         <input type="submit" />
       </div>

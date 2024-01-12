@@ -12,9 +12,10 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { Link } from "react-router-dom";
+import { useAuth0 } from "@auth0/auth0-react";
 
-const pages = ["Business", "Invoice", "Contacts"];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+//const pages = ["Business", "Invoice", "Contacts"];
+const pages = ["Invoice"];
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -33,6 +34,21 @@ function ResponsiveAppBar() {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const { loginWithRedirect, logout, isAuthenticated, user } = useAuth0();
+
+  //const settings = ["Profile", "Account", "Dashboard", "Logout"];
+  const settings = isAuthenticated
+    ? ["Profile", "Account", "Dashboard", "Logout"]
+    : ["Login"];
+
+  const handleLogin = () => {
+    loginWithRedirect();
+  };
+
+  const handleLogout = () => {
+    logout({ returnTo: window.location.origin });
   };
 
   return (
@@ -157,8 +173,23 @@ function ResponsiveAppBar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
+              {/* {settings.map((setting) => (
                 <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                  <Typography textAlign="center">{setting}</Typography>
+                </MenuItem>
+              ))} */}
+              {settings.map((setting) => (
+                <MenuItem
+                  key={setting}
+                  onClick={() => {
+                    if (setting === "Login") {
+                      handleLogin();
+                    } else if (setting === "Logout") {
+                      handleLogout();
+                    }
+                    handleCloseUserMenu();
+                  }}
+                >
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}

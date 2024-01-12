@@ -4,12 +4,19 @@ import Invoice from "./pages/Invoice";
 import NewContact from "./pages/NewContact";
 import Contacts from "./pages/Contacts";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Auth0Provider } from "@auth0/auth0-react";
+import { useAuth0 } from "@auth0/auth0-react";
+
+/*const authenticatedRoutes = [
+  // { path: "/Business", element: <Business /> },
+  { path: "/Invoice", element: <Invoice /> },
+  //{ path: "/Contacts", element: <Contacts /> },
+  //{ path: "/Contacts/add", element: <NewContact /> },
+];*/
 
 const routes = [
-  { path: "/Business", element: <Business /> },
+  { path: "/", element: <Business /> },
   { path: "/Invoice", element: <Invoice /> },
-  { path: "/Contacts", element: <Contacts /> },
-  { path: "/Contacts/add", element: <NewContact /> },
 ];
 
 function App() {
