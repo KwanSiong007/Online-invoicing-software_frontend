@@ -18,6 +18,7 @@ import { Link } from "react-router-dom";
 import { BACKEND_URL } from "../constants/BackendUrl";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useAuth0 } from "@auth0/auth0-react";
 
 function Contacts() {
   const linkStyle = {
@@ -26,18 +27,28 @@ function Contacts() {
   };
 
   const [contacts, setContacts] = useState([]);
-  console.log("contacts:", contacts);
   const [editContactId, setEditContactId] = useState(null);
   const [editFormData, setEditFormData] = useState({});
   const [dialogOpen, setDialogOpen] = useState(false);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  const { getAccessTokenSilently } = useAuth0();
 
   useEffect(() => {
-    axios.get(`${BACKEND_URL}/contacts`).then((response) => {
-      // Sort the contacts array in ascending order by ID before setting it to the state
-      const sortedContacts = response.data.sort((a, b) => a.id - b.id);
-      setContacts(sortedContacts);
-    });
+    const getContacts = async () => {
+      try {
+        const response = await axios.get(`${BACKEND_URL}/contacts`, {
+          headers: {
+            Authorization: `Bearer ${await getAccessTokenSilently()}`,
+          },
+        });
+        // Sort the contacts array in ascending order by ID before setting it to the state
+        const sortedContacts = response.data.sort((a, b) => a.id - b.id);
+        setContacts(sortedContacts);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getContacts();
   }, []);
 
   //The handleEditClick function sets the editContactId and editFormData for the clicked row.
@@ -53,7 +64,11 @@ function Contacts() {
 
   //The handleSave function sends the updated data to the server with a PUT request and updates the local contacts state with the new data.
   const handleSave = async (id) => {
-    await axios.put(`${BACKEND_URL}/contacts/${id}`, editFormData);
+    await axios.put(`${BACKEND_URL}/contacts/${id}`, editFormData, {
+      headers: {
+        Authorization: `Bearer ${await getAccessTokenSilently()}`,
+      },
+    });
     const updatedContacts = contacts.map((contact) => {
       if (contact.id === id) {
         return { ...contact, ...editFormData };
@@ -77,7 +92,11 @@ function Contacts() {
 
   //If the user confirms the deletion, handleDeleteConfirm is called, which makes a DELETE request to the backend and removes the contact from the local state.
   const handleDeleteConfirm = async () => {
-    await axios.delete(`${BACKEND_URL}/contacts/${confirmDeleteId}`);
+    await axios.delete(`${BACKEND_URL}/contacts/${confirmDeleteId}`, {
+      headers: {
+        Authorization: `Bearer ${await getAccessTokenSilently()}`,
+      },
+    });
     const updatedContacts = contacts.filter(
       (contact) => contact.id !== confirmDeleteId
     );

@@ -1,21 +1,22 @@
 import * as React from "react";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
+import {
+  AppBar,
+  Box,
+  Toolbar,
+  IconButton,
+  Typography,
+  Menu,
+  Container,
+  Avatar,
+  Button,
+  Tooltip,
+  MenuItem,
+} from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
-import MenuItem from "@mui/material/MenuItem";
 import { Link } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 
-//const pages = ["Business", "Invoice", "Contacts"];
-const pages = ["Invoice"];
+const pages = ["Invoice", "Contacts"];
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -36,16 +37,8 @@ function ResponsiveAppBar() {
     setAnchorElUser(null);
   };
 
-  const { loginWithRedirect, logout, isAuthenticated, user } = useAuth0();
-
-  //const settings = ["Profile", "Account", "Dashboard", "Logout"];
-  const settings = isAuthenticated
-    ? ["Profile", "Account", "Dashboard", "Logout"]
-    : ["Login"];
-
-  const handleLogin = () => {
-    loginWithRedirect();
-  };
+  const { logout, isAuthenticated, user } = useAuth0();
+  const settings = isAuthenticated ? ["Logout"] : [];
 
   const handleLogout = () => {
     logout({ returnTo: window.location.origin });
@@ -58,8 +51,8 @@ function ResponsiveAppBar() {
           <Typography
             variant="h6"
             noWrap
-            component="a"
-            href="#app-bar-with-responsive-menu"
+            component={Link}
+            to="/"
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
@@ -116,11 +109,12 @@ function ResponsiveAppBar() {
               ))}
             </Menu>
           </Box>
+
           <Typography
             variant="h5"
             noWrap
-            component="a"
-            href="#app-bar-with-responsive-menu"
+            component={Link}
+            to="/"
             sx={{
               mr: 2,
               display: { xs: "flex", md: "none" },
@@ -151,10 +145,20 @@ function ResponsiveAppBar() {
             ))}
           </Box>
 
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
+          <Box sx={{ flexGrow: 0, display: "flex", alignItems: "center" }}>
+            {isAuthenticated && user && (
+              <Typography variant="subtitle1" sx={{ mr: 2, color: "white" }}>
+                {user.email}
+              </Typography>
+            )}
+            <Tooltip title="Open user menu">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                {/* The alt attribute is conditionally set to user.name if the user is authenticated, otherwise it defaults to 'Avatar'.
+                 The children of the Avatar component is set to the first character of the user's email address converted to uppercase. 
+                 If the user is not authenticated, it defaults to 'A'.*/}
+                <Avatar alt={user ? user.name : "Avatar"}>
+                  {user ? user.email[0].toUpperCase() : "A"}
+                </Avatar>
               </IconButton>
             </Tooltip>
             <Menu
@@ -173,18 +177,11 @@ function ResponsiveAppBar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {/* {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))} */}
               {settings.map((setting) => (
                 <MenuItem
                   key={setting}
                   onClick={() => {
-                    if (setting === "Login") {
-                      handleLogin();
-                    } else if (setting === "Logout") {
+                    if (setting === "Logout") {
                       handleLogout();
                     }
                     handleCloseUserMenu();

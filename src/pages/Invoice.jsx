@@ -19,32 +19,24 @@ function Invoice() {
     control,
     name: "items",
   });
-  const { user, getAccessTokenSilently } = useAuth0();
-
-  /* useEffect(() => {
-    axios.get(`${BACKEND_URL}/contacts`).then((response) => {
-      setCompanies(response.data);
-    });
-  }, []);*/
+  const { getAccessTokenSilently } = useAuth0();
 
   useEffect(() => {
+    const getContacts = async () => {
+      try {
+        let response = await axios.get(`${BACKEND_URL}/contacts`, {
+          headers: {
+            Authorization: `Bearer ${await getAccessTokenSilently()}`,
+          },
+        });
+
+        setCompanies(response.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
     getContacts();
   }, []);
-
-  const getContacts = async () => {
-    try {
-      console.log("getAccessTokenSilently:", await getAccessTokenSilently());
-      let data = await axios.get(`${BACKEND_URL}/contacts`, {
-        headers: {
-          Authorization: `Bearer ${await getAccessTokenSilently()}`,
-        },
-      });
-
-      setCompanies(data.data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
 
   const companyLabelOptions = companies.map((company) => ({
     label: company.company_name,
@@ -57,8 +49,6 @@ function Invoice() {
   }));
 
   const watchedItems = watch("items");
-  //const watchedGst = watch("gst", 0.09);
-  //const watchedTotalPrice = watch("totalPrice", 0);
 
   const calculateItemTotalPrice = (quantity, priceOfEachItem) => {
     const quantityNum = parseFloat(quantity) || 0;
@@ -91,27 +81,37 @@ function Invoice() {
     setValue("totalPrice", calculateTotalPrice().toFixed(2));
   }, [watchedItems]);
 
-  const onSubmit = (data) => {
-    axios
-      .post(`${BACKEND_URL}/invoices/add`, {
-        customerID: data.customerIDField,
-        companyName: data.autocompleteField.label,
-        uen: data.uenField,
-        customerName: data.customerNameField,
-        email: data.emailField,
-        phone: data.phoneField,
-        invoiceNumber: data.invoiceNumber,
-        issueDate: data.issueDate,
-        dueDate: data.dueDate,
-        invoiceItems: data.items,
-        totalPrice: calculateTotalPrice(),
-        gst: calculateGst(),
-        totalAmountWithGst: calculateTotalAmountWithGst(),
-      })
-      .then(() => {
-        // Reset the form after successful submission
-        reset();
-      });
+  const onSubmit = async (data) => {
+    try {
+      // Make the POST request to the server with the access token in the Authorization header
+      await axios.post(
+        `${BACKEND_URL}/invoices/add`,
+        {
+          customerID: data.customerIDField,
+          companyName: data.autocompleteField.label,
+          uen: data.uenField,
+          customerName: data.customerNameField,
+          email: data.emailField,
+          phone: data.phoneField,
+          invoiceNumber: data.invoiceNumber,
+          issueDate: data.issueDate,
+          dueDate: data.dueDate,
+          invoiceItems: data.items,
+          totalPrice: calculateTotalPrice(),
+          gst: calculateGst(),
+          totalAmountWithGst: calculateTotalAmountWithGst(),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${await getAccessTokenSilently()}`,
+          },
+        }
+      );
+      // Reset the form after successful submission
+      reset();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

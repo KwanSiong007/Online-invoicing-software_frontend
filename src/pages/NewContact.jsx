@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { BACKEND_URL } from "../constants/BackendUrl";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAuth0 } from "@auth0/auth0-react";
 
 function NewContact() {
   const {
@@ -10,17 +11,30 @@ function NewContact() {
     formState: { errors },
   } = useForm();
   const navigate = useNavigate();
+  const { getAccessTokenSilently } = useAuth0();
 
-  const onSubmit = (data) => {
-    axios
-      .post(`${BACKEND_URL}/contacts/add`, {
-        companyName: data.companyName,
-        uen: data.uen,
-        customerName: data.customerName,
-        email: data.email,
-        phone: data.phone,
-      })
-      .then(navigate(`/Contacts`));
+  const onSubmit = async (data) => {
+    try {
+      // Make the POST request to the server with the access token in the Authorization header
+      await axios.post(
+        `${BACKEND_URL}/contacts/add`,
+        {
+          companyName: data.companyName,
+          uen: data.uen,
+          customerName: data.customerName,
+          email: data.email,
+          phone: data.phone,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${await getAccessTokenSilently()}`,
+          },
+        }
+      );
+      navigate(`/Contacts`);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

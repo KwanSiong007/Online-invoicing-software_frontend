@@ -4,29 +4,23 @@ import Invoice from "./pages/Invoice";
 import NewContact from "./pages/NewContact";
 import Contacts from "./pages/Contacts";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Auth0Provider } from "@auth0/auth0-react";
-import { useAuth0 } from "@auth0/auth0-react";
+import { withAuthenticationRequired } from "@auth0/auth0-react";
 
-/*const authenticatedRoutes = [
-  // { path: "/Business", element: <Business /> },
-  { path: "/Invoice", element: <Invoice /> },
-  //{ path: "/Contacts", element: <Contacts /> },
-  //{ path: "/Contacts/add", element: <NewContact /> },
-];*/
-
-const routes = [
-  { path: "/", element: <Business /> },
-  { path: "/Invoice", element: <Invoice /> },
-];
+// Define the route components with authentication required
+const AuthenticatedBusiness = withAuthenticationRequired(Business);
+const AuthenticatedInvoice = withAuthenticationRequired(Invoice);
+const AuthenticatedContacts = withAuthenticationRequired(Contacts);
+const AuthenticatedNewContact = withAuthenticationRequired(NewContact);
 
 function App() {
   return (
     <Router>
       <ResponsiveAppBar />
       <Routes>
-        {routes.map((route) => (
-          <Route key={route.path} path={route.path} element={route.element} />
-        ))}
+        <Route path="/" element={<AuthenticatedBusiness />} />
+        <Route path="/Invoice" element={<AuthenticatedInvoice />} />
+        <Route path="/Contacts" element={<AuthenticatedContacts />} />
+        <Route path="/Contacts/add" element={<AuthenticatedNewContact />} />
       </Routes>
     </Router>
   );
