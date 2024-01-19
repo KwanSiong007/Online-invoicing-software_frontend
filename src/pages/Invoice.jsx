@@ -50,14 +50,20 @@ function Invoice() {
 
   const watchedItems = watch("items");
 
+  //it takes two parameters: quantity and priceOfEachItem.
   const calculateItemTotalPrice = (quantity, priceOfEachItem) => {
+    //This line converts the quantity parameter to a floating-point number using parseFloat(). If the conversion results in a valid number, it assigns that value to quantityNum; otherwise, it defaults to 0.
     const quantityNum = parseFloat(quantity) || 0;
+    //this one converts the priceOfEachItem parameter to a floating-point number and assigns the result to priceNum. If the conversion fails, it defaults to 0.
     const priceNum = parseFloat(priceOfEachItem) || 0;
-    return quantityNum * priceNum;
+    //This line calculates the total price by multiplying quantityNum with priceNum.
+    //To ensure accurate rounding, it adds Number.EPSILON to the result before multiplying by 100, rounding using Math.round(), and finally dividing by 100.
+    //This ensures that the result is rounded to two decimal places.
+    return Math.round((quantityNum * priceNum + Number.EPSILON) * 100) / 100;
   };
 
   const calculateTotalPrice = () => {
-    return watchedItems.reduce((acc, currentItem) => {
+    const totalPrice = watchedItems.reduce((acc, currentItem) => {
       return (
         acc +
         calculateItemTotalPrice(
@@ -66,19 +72,22 @@ function Invoice() {
         )
       );
     }, 0);
+    return Math.round((totalPrice + Number.EPSILON) * 100) / 100;
   };
 
   const calculateGst = () => {
-    return calculateTotalPrice() * 0.09;
+    const gst = calculateTotalPrice() * 0.09;
+    return Math.round((gst + Number.EPSILON) * 100) / 100;
   };
 
   const calculateTotalAmountWithGst = () => {
-    return calculateTotalPrice() + calculateGst();
+    const totalAmountWithGst = calculateTotalPrice() * 1.09;
+    return Math.round((totalAmountWithGst + Number.EPSILON) * 100) / 100;
   };
 
   // Trigger the calculation of the total price whenever items change
   useEffect(() => {
-    setValue("totalPrice", calculateTotalPrice().toFixed(2));
+    setValue("totalPrice", calculateTotalPrice());
   }, [watchedItems]);
 
   const onSubmit = async (data) => {
@@ -301,19 +310,19 @@ function Invoice() {
             <tr>
               <td colSpan="4"></td>
               <td>Total price:</td>
-              <td>{calculateTotalPrice().toFixed(2)}</td>
+              <td>{calculateTotalPrice()}</td>
               <td></td>
             </tr>
             <tr>
               <td colSpan="4"></td>
               <td>GST (9%):</td>
-              <td>{calculateGst().toFixed(2)}</td>
+              <td>{calculateGst()}</td>
               <td></td>
             </tr>
             <tr>
               <td colSpan="4"></td>
               <td>Total amount with GST:</td>
-              <td>{calculateTotalAmountWithGst().toFixed(2)}</td>
+              <td>{calculateTotalAmountWithGst()}</td>
               <td></td>
             </tr>
           </tbody>
